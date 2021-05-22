@@ -20,6 +20,7 @@ def show_examples(images, labels):
         plt.xlabel(class_names[labels[i]])
     plt.show()
 
+# Create simple CNN to compare as baseline
 def baseline_model():
     model = models.Sequential()
     model.add(layers.Conv2D(32, (3, 3), activation='relu', input_shape=(256, 256, 1)))
@@ -29,6 +30,7 @@ def baseline_model():
     model.add(layers.Dense(1, activation = 'sigmoid'))
     return model
 
+# Create CNN with multiple convolutions
 def multilayer_cnn():
     model = models.Sequential()
     model.add(layers.Conv2D(32, (3, 3), activation='relu', input_shape=(256, 256, 1)))
@@ -43,6 +45,8 @@ def multilayer_cnn():
     model.add(layers.Dense(1, activation = 'sigmoid'))
     return model
 
+
+# Create CNN with multiple convolutions and dropout for regularization
 def multilayer_regularized_cnn():
     model = models.Sequential()
     model.add(layers.Conv2D(32, (3, 3), activation='relu', input_shape=(256, 256, 1)))
@@ -61,6 +65,7 @@ def multilayer_regularized_cnn():
     model.add(layers.Dense(1, activation = 'sigmoid'))
     return model
 
+# Add multiple fully connected layers after CNN
 def deep_cnn():
     model = models.Sequential()
     model.add(layers.Conv2D(64, (3, 3), activation='relu', input_shape=(256, 256, 1)))
@@ -85,6 +90,7 @@ def deep_cnn():
     model.add(layers.Dense(1, activation='sigmoid'))
     return model
 
+# Train keras model and save results for plotting
 def evaluate_model(train, test, model, callback, name):
     train_images, train_labels = train
     test_images, test_labels = test
@@ -101,6 +107,7 @@ def evaluate_model(train, test, model, callback, name):
     print("Model evaluation completed")
     return test_loss, test_acc
 
+# Create roc curve measurements for plotting
 def compute_roc(model, name, test_images, test_labels):
     preds = model.predict(test_images)
     fpr, tpr, thresholds = metrics.roc_curve(test_labels, preds)
@@ -109,24 +116,26 @@ def compute_roc(model, name, test_images, test_labels):
 
 
 def main():
+    # Load metadata with image info
     metadata_fp = 'image_metadata.csv'
     df = pd.read_csv(metadata_fp)
-    # df = df.head(10)
+
+    # Load images and partition into train/test
     train, test = loader.load_data(df, .9)
-    #(train_images, train_labels), (test_images, test_labels) = loader.load_data(df, .9)
-    #print(train_images.shape)
-    #print(train_labels.shape)
+
+    # Create keras models
     baseline = baseline_model()
     multi_cnn = multilayer_cnn()
     multireg_cnn = multilayer_regularized_cnn()
     deepCNN  = deep_cnn()
+
+    # Define early stopping rule
     callback = tf.keras.callbacks.EarlyStopping(monitor='loss', patience=4)
   
     if not os.path.exists('results'):
         os.mkdir('results')
 
-
-
+    # Train and evaluate models
     baseline_res = evaluate_model(train, test, baseline, callback, "baseline")
     compute_roc(baseline, "baseline", *test)
     
@@ -139,22 +148,11 @@ def main():
     dcnn_res = evaluate_model(train, test, deepCNN, callback, "deep_cnn")
     compute_roc(deepCNN, "deep_cnn", *test)
     
+    # Save results
     res = [baseline_res, mcnn_res, mrcnn_res, dcnn_res]
     test_acc = {'name' : ['baseline', 'multilayer', 'multilayer_regularized', 'deep'], 'accuracy' : [t[1] for t in res]}
     df = pd.DataFrame.from_dict(test_acc)
     df.to_csv("results/test_accuracies.csv", index=False, header=True)
-
-
-    # plt.plot(history.history['accuracy'], label='accuracy')
-    # plt.plot(history.history['val_accuracy'], label = 'val_accuracy')
-    # plt.xlabel('Epoch')
-    # plt.ylabel('Accuracy')
-    # plt.ylim([0.5, 1])
-    # plt.legend(loc='lower right')
-    # plt.show()
-
-    #test_loss, test_acc = model.evaluate(test_images,  test_labels, verbose=2)
-    #print(f"Test Accuracy: {test_acc}")
 
 if __name__ == '__main__':
     main()

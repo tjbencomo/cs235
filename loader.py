@@ -7,6 +7,7 @@ import pandas as pd
 
 IMG_SHAPE = (256, 256)
 
+# Load individual image, converting from h5 to numpy matrix
 def load_case(fp, return_mask = False):
     f = h5.File(fp, 'r')
     if f['data'][:, :, 0].shape != IMG_SHAPE:
@@ -17,6 +18,7 @@ def load_case(fp, return_mask = False):
         return img, mask
     return img
 
+# Load data defined by dataframe and partition into train/test set
 def load_data(metadata, train_prop = .8):
     imgs = []
     for i, fp in enumerate(metadata['filepath']):
