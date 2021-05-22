@@ -9,3 +9,5 @@
 `accuracy_plots.R` - Generate accuracy curve figure
 
 `roc_curve.R` - Generate ROC curve figure
+
+`roc_table.py` - Generate AUC-ROC table
