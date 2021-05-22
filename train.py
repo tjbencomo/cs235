@@ -1,3 +1,5 @@
+# Description: Train and evaluate CNNs for breast cancer classification
+
 import os
 import loader
 import pandas as pd

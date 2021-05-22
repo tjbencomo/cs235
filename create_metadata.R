@@ -1,3 +1,6 @@
+# Description: Clean metadata associated with provided image data. Remove
+# cases without any images and ignore images without any metadata
+
 library(readr)
 library(dplyr)
 library(stringr)

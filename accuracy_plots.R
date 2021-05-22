@@ -1,3 +1,5 @@
+# Description: Make plots showing accuracy curves for each model
+
 library(readr)
 library(stringr)
 library(dplyr)

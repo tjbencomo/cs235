@@ -1,3 +1,6 @@
+# Description: Load image data from pandas dataframe. Convert
+# h5 data to numpy matrices and partition into train and test sets
+
 import h5py as h5
 import numpy as np
 import pandas as pd
